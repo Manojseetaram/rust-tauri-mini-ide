@@ -1,19 +1,10 @@
-import Index from "./components/Fileeditor";
+import CodeEditor from "./components/Editor";
 
 
-
-
-
-
-export default function Home() {
-  return (
-
-         <div>
-         
-  
-
-    <Index></Index>
-         </div>
-
-  );
+export default function HomePage() {
+  return(
+    <div>
+      <CodeEditor></CodeEditor>
+    </div>
+  )
 }
