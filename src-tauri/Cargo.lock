@@ -94,6 +94,7 @@ checksum = "b0674a1ddeecb70197781e945de4b3b8ffb61fa939a5597bcf48503737663100"
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "invoke",
  "log",
  "serde",
  "serde_json",
@@ -1603,6 +1604,12 @@ checksum = "a588916bfdfd92e71cacef98a63d9b1f0d74d6599980d11894290e7ddefffcf7"
 dependencies = [
  "cfb",
 ]
+
+[[package]]
+name = "invoke"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5751805d5695afd62c6d7b26a28a81f425004659624e8a31872c0a0282e620ea"
 
 [[package]]
 name = "io-uring"

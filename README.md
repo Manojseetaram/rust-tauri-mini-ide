@@ -18,3 +18,9 @@ npm run dev
 //desktop view
 npx tauri dev
 
+
+//combined command 
+
+npm run tauri:dev
+
+npm install monaco-editor @monaco-editor/react
