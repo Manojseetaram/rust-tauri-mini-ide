@@ -24,3 +24,6 @@ npx tauri dev
 npm run tauri:dev
 
 npm install monaco-editor @monaco-editor/react
+
+// this command is usefull i can start tauri without waching
+npm run tauri dev -- --no-watch

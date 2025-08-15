@@ -7,7 +7,6 @@ mod exec;
 mod fs_ops;
 mod hander;
 
-
 use tauri::Builder;
 
 fn main() {
@@ -18,8 +17,8 @@ fn main() {
             fs_ops::create_file,
             fs_ops::create_folder,
             fs_ops::delete_path,
-            hander::list_folder,
-            hander::list_files,
+             fs_ops::list_folder,
+          
             exec::run_rust_code
         ])
         .run(tauri::generate_context!())

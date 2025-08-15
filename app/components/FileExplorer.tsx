@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { open as openDialog } from "@tauri-apps/api/dialog";
+import { open } from '@tauri-apps/plugin-dialog';
 
 interface FileExplorerProps {
   onOpenFile: (path: string) => void;
@@ -25,12 +25,12 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
 
   const openFile = (path: string) => {
     onOpenFile(path);
-    setRecentFiles((prev) => [path, ...prev.filter((f) => f !== path)].slice(0, 10));
+    setRecentFiles(prev => [path, ...prev.filter(f => f !== path)].slice(0, 10));
   };
 
   const selectFolder = async () => {
     try {
-      const folder = await openDialog({ directory: true });
+      const folder = await open({ directory: true });
       if (folder) await loadFolder(folder as string);
     } catch (err) {
       console.error("Failed to select folder:", err);
@@ -46,7 +46,7 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
       await invoke("create_file", { path: newPath });
       await loadFolder(currentPath);
     } catch (err) {
-      console.error("Failed to create file:", err);
+      console.error(err);
     }
   };
 
@@ -59,7 +59,7 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
       await invoke("create_folder", { path: newPath });
       await loadFolder(currentPath);
     } catch (err) {
-      console.error("Failed to create folder:", err);
+      console.error(err);
     }
   };
 
@@ -69,11 +69,11 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
       await invoke("delete_path", { path });
       await loadFolder(currentPath);
     } catch (err) {
-      console.error("Failed to delete:", err);
+      console.error(err);
     }
   };
 
-  const visibleEntries = entries.filter((f) => !f.startsWith("."));
+  const visibleEntries = entries.filter(f => !f.startsWith("."));
 
   useEffect(() => {
     const saved = localStorage.getItem("recentFiles");
@@ -96,14 +96,14 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
       {currentPath && <h4>Path: {currentPath}</h4>}
 
       <ul style={{ padding: 0, listStyle: "none" }}>
-        {visibleEntries.map((entry) => {
+        {visibleEntries.map(entry => {
           const fullPath = `${currentPath}/${entry}`;
           const isFolder = entry.endsWith("/");
           return (
             <li key={fullPath} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
               <span
                 style={{ cursor: "pointer", color: isFolder ? "lightblue" : "white" }}
-                onClick={() => (isFolder ? loadFolder(fullPath) : openFile(fullPath))}
+                onClick={() => isFolder ? loadFolder(fullPath) : openFile(fullPath)}
               >
                 {entry.replace(/\/$/, "")}
               </span>
@@ -117,7 +117,7 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
         <>
           <h4>Recent Files</h4>
           <ul style={{ padding: 0, listStyle: "none" }}>
-            {recentFiles.map((f) => (
+            {recentFiles.map(f => (
               <li key={f}>
                 <span style={{ cursor: "pointer", color: "lightgreen" }} onClick={() => openFile(f)}>
                   {f.split("/").pop()}
