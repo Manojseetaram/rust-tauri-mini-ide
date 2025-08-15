@@ -35,3 +35,7 @@ npm install @tauri-apps/plugin-dialog
 //install rust crate
 cd src-tauri
 cargo add tauri-plugin-dialog
+//
+npm install @tauri-apps/plugin-fs
+//
+npm install tailwindcss lucide-react
