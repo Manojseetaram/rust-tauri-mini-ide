@@ -11,6 +11,7 @@ use tauri::Builder;
 
 fn main() {
     Builder::default()
+       .plugin(tauri_plugin_dialog::init()) // <-- add this
         .invoke_handler(tauri::generate_handler![
             fs_ops::read_file,
             fs_ops::write_file,

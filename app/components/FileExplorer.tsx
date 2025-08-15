@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { open } from '@tauri-apps/plugin-dialog';
+import { open } from "@tauri-apps/plugin-dialog";
 
 interface FileExplorerProps {
   onOpenFile: (path: string) => void;
@@ -15,6 +15,7 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
 
   const loadFolder = async (path: string) => {
     try {
+      if (!path) throw new Error("No path provided");
       const folderEntries: string[] = await invoke("list_folder", { path });
       setEntries(folderEntries);
       setCurrentPath(path);
@@ -23,30 +24,33 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
     }
   };
 
+  const selectFolder = async () => {
+    try {
+      const folder = await open({ directory: true, multiple: false });
+      if (!folder || typeof folder !== "string") {
+        console.log("Folder selection cancelled");
+        return;
+      }
+      await loadFolder(folder);
+    } catch (err) {
+      console.error("Failed to open folder dialog:", err);
+    }
+  };
+
   const openFile = (path: string) => {
     onOpenFile(path);
     setRecentFiles(prev => [path, ...prev.filter(f => f !== path)].slice(0, 10));
-  };
-
-  const selectFolder = async () => {
-    try {
-      const folder = await open({ directory: true });
-      if (folder) await loadFolder(folder as string);
-    } catch (err) {
-      console.error("Failed to select folder:", err);
-    }
   };
 
   const createNewFile = async () => {
     if (!currentPath) return alert("Select a folder first");
     const name = prompt("Enter file name");
     if (!name) return;
-    const newPath = `${currentPath}/${name}`;
     try {
-      await invoke("create_file", { path: newPath });
+      await invoke("create_file", { path: `${currentPath}/${name}` });
       await loadFolder(currentPath);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to create file:", err);
     }
   };
 
@@ -54,12 +58,11 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
     if (!currentPath) return alert("Select a folder first");
     const name = prompt("Enter folder name");
     if (!name) return;
-    const newPath = `${currentPath}/${name}`;
     try {
-      await invoke("create_folder", { path: newPath });
+      await invoke("create_folder", { path: `${currentPath}/${name}` });
       await loadFolder(currentPath);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to create folder:", err);
     }
   };
 
@@ -69,11 +72,9 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
       await invoke("delete_path", { path });
       await loadFolder(currentPath);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to delete:", err);
     }
   };
-
-  const visibleEntries = entries.filter(f => !f.startsWith("."));
 
   useEffect(() => {
     const saved = localStorage.getItem("recentFiles");
@@ -83,6 +84,8 @@ export default function FileExplorer({ onOpenFile }: FileExplorerProps) {
   useEffect(() => {
     localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
   }, [recentFiles]);
+
+  const visibleEntries = entries.filter(f => !f.startsWith("."));
 
   return (
     <div style={{ width: "300px", borderRight: "1px solid #333", padding: "10px", color: "white" }}>

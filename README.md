@@ -27,3 +27,11 @@ npm install monaco-editor @monaco-editor/react
 
 // this command is usefull i can start tauri without waching
 npm run tauri dev -- --no-watch
+
+
+//
+npm install @tauri-apps/plugin-dialog
+
+//install rust crate
+cd src-tauri
+cargo add tauri-plugin-dialog
